@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
+import ec.edu.ups.icc.labevaluation.supplies.dtos.UpdateSupplyQuantityDto;
 import ec.edu.ups.icc.labevaluation.supplies.services.SupplyService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -36,6 +39,12 @@ public class SupplyController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<SupplyResponseDto>> findLowStock(@RequestParam Integer maxQuantity) {
         return ResponseEntity.ok(service.findLowStock(maxQuantity));
+    }
+
+    @PatchMapping("{id}/quantity")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDINATOR')")
+        public ResponseEntity<SupplyResponseDto> updateQuantity(@PathVariable Long id, @Valid @RequestBody UpdateSupplyQuantityDto dto) {
+        return ResponseEntity.ok(service.updateQuantity(id, dto));
     }
     
 }

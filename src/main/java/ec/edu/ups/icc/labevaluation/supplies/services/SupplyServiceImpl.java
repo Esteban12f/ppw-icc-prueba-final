@@ -4,14 +4,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import ec.edu.ups.icc.labevaluation.core.exceptions.domain.NotFoundException;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
+import ec.edu.ups.icc.labevaluation.supplies.dtos.UpdateSupplyQuantityDto;
 import ec.edu.ups.icc.labevaluation.supplies.entities.SupplyEntity;
 import ec.edu.ups.icc.labevaluation.supplies.mappers.SupplyMapper;
 import ec.edu.ups.icc.labevaluation.supplies.repositories.SupplyRepository;
 
 @Service
-public class SupplyServiceImpl implements SupplyService{
+public class SupplyServiceImpl implements SupplyService {
     private final SupplyRepository repository;
 
     public SupplyServiceImpl(SupplyRepository repository) {
@@ -27,7 +29,19 @@ public class SupplyServiceImpl implements SupplyService{
     @Override
     public List<SupplyResponseDto> findLowStock(Integer maxQuantity) {
         return repository.findByActiveTrueAndDeletedFalseAndQuantityLessThanOrderByQuantityAsc(maxQuantity).stream()
-        .map(SupplyMapper::toResponse).toList();
+                .map(SupplyMapper::toResponse).toList();
     }
-    
+
+    @Override
+    public SupplyResponseDto updateQuantity(Long id, UpdateSupplyQuantityDto dto) {
+        SupplyEntity entity = findExisting(id);
+        entity.setQuantity(dto.quantity());
+        return SupplyMapper.toResponse(repository.save(entity));
+    }
+
+    private SupplyEntity findExisting(Long id) {
+        return repository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new NotFoundException("SUPPLY_NOT_FOUND", "Supply not found"));
+    }
+
 }
