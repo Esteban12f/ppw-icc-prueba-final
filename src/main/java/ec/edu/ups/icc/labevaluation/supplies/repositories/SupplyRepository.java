@@ -9,4 +9,5 @@ import ec.edu.ups.icc.labevaluation.supplies.entities.SupplyEntity;
 public interface SupplyRepository extends JpaRepository<SupplyEntity, Long>{
     List<SupplyEntity> findByActiveTrueAndDeletedFalseAndQuantityLessThanOrderByQuantityAsc(Integer maxQuantity);
     Optional<SupplyEntity> findByIdAndDeletedFalse(Long id);
+    boolean existsByNameIgnoreCaseAndDeletedFalse(String name);
 }

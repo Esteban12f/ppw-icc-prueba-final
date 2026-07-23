@@ -9,6 +9,7 @@ import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.UpdateSupplyQuantityDto;
 import ec.edu.ups.icc.labevaluation.supplies.entities.SupplyEntity;
+import ec.edu.ups.icc.labevaluation.supplies.exceptions.SupplyConflictException;
 import ec.edu.ups.icc.labevaluation.supplies.mappers.SupplyMapper;
 import ec.edu.ups.icc.labevaluation.supplies.repositories.SupplyRepository;
 
@@ -39,6 +40,16 @@ public class SupplyServiceImpl implements SupplyService {
         return SupplyMapper.toResponse(repository.save(entity));
     }
 
+    @Override
+    public void delete(Long id) {
+        SupplyEntity entity = findExisting(id);
+        if (entity.getQuantity() > 0) {
+            throw new SupplyConflictException("Supply cannot be deleted while quantity is greater than zero");
+        }
+        entity.setDeleted(true);
+        entity.setActive(false);
+        repository.save(entity);
+    }
     private SupplyEntity findExisting(Long id) {
         return repository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("SUPPLY_NOT_FOUND", "Supply not found"));

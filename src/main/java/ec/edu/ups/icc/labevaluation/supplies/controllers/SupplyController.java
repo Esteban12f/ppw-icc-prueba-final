@@ -15,6 +15,8 @@ import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.UpdateSupplyQuantityDto;
 import ec.edu.ups.icc.labevaluation.supplies.services.SupplyService;
 import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,8 +45,15 @@ public class SupplyController {
 
     @PatchMapping("{id}/quantity")
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDINATOR')")
-        public ResponseEntity<SupplyResponseDto> updateQuantity(@PathVariable Long id, @Valid @RequestBody UpdateSupplyQuantityDto dto) {
+    public ResponseEntity<SupplyResponseDto> updateQuantity(@PathVariable Long id, @Valid @RequestBody UpdateSupplyQuantityDto dto) {
         return ResponseEntity.ok(service.updateQuantity(id, dto));
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDINATOR')")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
     
 }
