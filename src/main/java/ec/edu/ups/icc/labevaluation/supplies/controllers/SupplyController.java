@@ -1,5 +1,7 @@
 package ec.edu.ups.icc.labevaluation.supplies.controllers;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +14,9 @@ import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
 import ec.edu.ups.icc.labevaluation.supplies.services.SupplyService;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController @RequestMapping("/supplies")
 public class SupplyController {
@@ -26,4 +31,11 @@ public class SupplyController {
     public ResponseEntity<SupplyResponseDto> create(@Valid @RequestBody CreateSupplyDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
+
+    @GetMapping("/low-stock")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<SupplyResponseDto>> findLowStock(@RequestParam Integer maxQuantity) {
+        return ResponseEntity.ok(service.findLowStock(maxQuantity));
+    }
+    
 }
