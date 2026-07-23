@@ -4,6 +4,11 @@ import ec.edu.ups.icc.labevaluation.users.entities.UserEntity;
 public final class UserMapper {
     private UserMapper() {}
     public static UserResponseDto toResponse(UserEntity entity){
-        return new UserResponseDto(entity.getId(), entity.getFullName(), entity.getEmail());
+        return new UserResponseDto(entity.getId(), 
+        entity.getFullName(), 
+        entity.getEmail(), 
+        entity.getAge(), 
+        entity.isActive(), 
+        entity.getRoles());
     }
 }
